@@ -8,8 +8,10 @@ import { FcGoogle } from "react-icons/fc"
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi"
 import { Button } from "../ui/button"
 import { Spinner } from "../ui/spinner"
+import { signUp } from "@/lib/auth-client"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
-// Zod schema
 const registerSchema = z.object({
   names: z.string().min(2, "Enter your full name"),
   email: z.string().email("Enter a valid email"),
@@ -21,23 +23,41 @@ type RegisterFormProps = z.infer<typeof registerSchema>
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter()
 
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormProps>({
-    resolver: zodResolver(registerSchema)
+    resolver: zodResolver(registerSchema),
+    defaultValues: { names: '', email: "", password: "" },
   })
 
   const onSubmit = async (data: RegisterFormProps) => {
     setLoading(true)
-    console.log("Form Submitted:", data)
-    setLoading(false)
+    try {
+      const result = await signUp.email({
+        name: data.names,
+        email: data.email,
+        password: data.password,
+      })
+
+      // Better Auth returns data differently - check the actual response structure
+      if (result.error) {
+        toast.error(`Registration failed: ${result.error.message || result.error}`)
+        return
+      }
+
+      toast.success("Registration successful! Please check your email to verify your account.")
+      router.push('/auth/verify-email') // Redirect to verification page instead of dashboard
+    } catch (err: any) {
+      console.error("Registration error:", err)
+      toast.error(err?.message || "Something went wrong during registration")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-lg space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 text-center">Register</h2>
-
+    <div className="max-w-md mx-auto p-6 space-y-6">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
         {/* Names */}
         <div className="flex flex-col">
           <label className="label mb-1 font-medium">Names</label>
@@ -46,7 +66,7 @@ const RegisterForm = () => {
             <input
               type="text"
               placeholder="Enter your full name"
-              className="input"
+              className="input pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
               {...register("names")}
             />
           </div>
@@ -61,7 +81,7 @@ const RegisterForm = () => {
             <input
               type="email"
               placeholder="Enter your email"
-              className="input"
+              className="input pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
               {...register("email")}
             />
           </div>
@@ -76,12 +96,12 @@ const RegisterForm = () => {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
-              className="input "
+              className="input pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
               {...register("password")}
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -90,7 +110,11 @@ const RegisterForm = () => {
           {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
         </div>
 
-        <Button className="btn w-full mt-4 py-2 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg shadow-md" disabled={loading}>
+        <Button
+          type="submit"
+          className="w-full mt-4 py-2 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg shadow-md"
+          disabled={loading}
+        >
           {loading ? <Spinner /> : "Register"}
         </Button>
       </form>
@@ -103,9 +127,12 @@ const RegisterForm = () => {
       </div>
 
       {/* Google Sign in */}
-      <button className="w-full flex items-center justify-center gap-2 py-2 text-md bg-pink-50 rounded-lg hover:bg-pink-100 font-semibold shadow-sm">
+      <button 
+        type="button"
+        className="w-full flex items-center justify-center gap-2 py-2 text-md bg-pink-50 rounded-lg hover:bg-pink-100 font-semibold shadow-sm border border-gray-200"
+      >
         <FcGoogle size={22} />
-        Sign in with Google
+        Sign up with Google
       </button>
     </div>
   )
