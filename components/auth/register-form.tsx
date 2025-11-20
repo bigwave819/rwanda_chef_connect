@@ -39,14 +39,13 @@ const RegisterForm = () => {
         password: data.password,
       })
 
-      // Better Auth returns data differently - check the actual response structure
       if (result.error) {
         toast.error(`Registration failed: ${result.error.message || result.error}`)
         return
       }
 
       toast.success("Registration successful! Please check your email to verify your account.")
-      router.push('/auth/verify-email') // Redirect to verification page instead of dashboard
+      router.push('/admin/dashboard')
     } catch (err: any) {
       console.error("Registration error:", err)
       toast.error(err?.message || "Something went wrong during registration")

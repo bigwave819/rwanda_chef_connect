@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from '../components/layout/Navbar'
+import { Toaster } from "@/components/ui/sonner"
 
 
 
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body
       >
         <Navbar />
+        <Toaster />
         <main>{children}</main>
       </body>
     </html>

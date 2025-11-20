@@ -55,19 +55,18 @@ const LoginForm = () => {
       });
 
       if (error) {
-        toast("Login failed please try again");
+        toast(`Login Failed due to ${error}`)
         return;
       }
 
-      toast("login successfully");
+      toast('login successfully')
 
-      router.push('/admin/dashboard')
+      window.location.href= '/admin/dashboard'
 
 
       console.log("Login success:", data);
     } catch (err) {
-      console.error(err);
-      toast("something went werong");
+      toast(`Login Failed due to ${err}`)
     } finally {
       setLoading(false);
     }

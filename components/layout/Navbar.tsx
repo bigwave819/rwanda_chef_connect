@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { LogIn, Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -15,6 +16,10 @@ export default function Home() {
   ];
 
   const closeMenu = () => setOpen(false);
+
+  const pathName = usePathname()
+
+  if(pathName.startsWith('/admin')) return null
 
   return (
     <div className="w-full p-5">
