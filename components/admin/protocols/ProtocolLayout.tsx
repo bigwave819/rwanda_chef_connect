@@ -1,5 +1,6 @@
 import { Search } from "lucide-react"
 import AddProtocols from "./addProtocols"
+import ViewProtocols from "./ViewProtocols"
 
 const ProtocolLayout = () => {
   return (
@@ -30,6 +31,7 @@ const ProtocolLayout = () => {
 
       {/* Divider */}
       <div className="border-b border-gray-200 dark:border-gray-700" />
+      <ViewProtocols />
     </div>
   )
 }

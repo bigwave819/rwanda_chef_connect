@@ -11,7 +11,8 @@ export default function Home() {
 
   const navbarData = [
     { id: 1, label: "Home", link: "/" },
-    { id: 2, label: "Explore", link: "/explore" },
+    { id: 2, label: "Chef", link: "/chefs" },
+    { id: 2, label: "Protocols", link: "/protocols" },
     { id: 3, label: "About", link: "/about" },
   ];
 

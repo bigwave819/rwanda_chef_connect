@@ -2,8 +2,14 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from '../components/layout/Navbar'
 import { Toaster } from "@/components/ui/sonner"
+import { Poppins } from 'next/font/google';
 
 
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500"],
+  variable: "--font-poppins",
+});
 
 export const metadata: Metadata = {
   title: "Rwandachef find chef for your party here",
@@ -16,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={poppins.variable}>
       <body
       >
         <Navbar />
