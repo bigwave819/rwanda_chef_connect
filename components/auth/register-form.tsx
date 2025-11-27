@@ -44,11 +44,15 @@ const RegisterForm = () => {
         return
       }
 
-      toast.success("Registration successful! Please check your email to verify your account.")
+      toast.success("Registration successful! Please check your email to verify your account.", {
+        className: "bg-green-600 text-white border-green-700"
+      })
       router.push('/admin/dashboard')
     } catch (err: any) {
       console.error("Registration error:", err)
-      toast.error(err?.message || "Something went wrong during registration")
+      toast.error(err?.message || "Something went wrong during registration", {
+        className: "bg-red-600 text-white border-red-700"
+      })
     } finally {
       setLoading(false)
     }
@@ -126,7 +130,7 @@ const RegisterForm = () => {
       </div>
 
       {/* Google Sign in */}
-      <button 
+      <button
         type="button"
         className="w-full flex items-center justify-center gap-2 py-2 text-md bg-pink-50 rounded-lg hover:bg-pink-100 font-semibold shadow-sm border border-gray-200"
       >

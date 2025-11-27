@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FcGoogle } from "react-icons/fc";
 import { FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 import { signIn } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
@@ -32,7 +32,7 @@ const LoginForm = () => {
 
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const router  = useRouter()
+  const router = useRouter()
 
   const {
     register,
@@ -55,13 +55,17 @@ const LoginForm = () => {
       });
 
       if (error) {
-        toast(`Login Failed due to ${error}`)
+        toast.error(`Login Failed due to ${error}`, {
+          className: "bg-red-600 text-white border-red-700"
+        })
         return;
       }
 
-      toast('login successfully')
+      toast('login successfully', {
+        className: "bg-green-600 text-white border-green-700"
+      })
 
-      window.location.href= '/admin/dashboard'
+      window.location.href = '/admin/dashboard'
 
 
       console.log("Login success:", data);

@@ -1,10 +1,12 @@
+import ProtocolLayout from "@/components/admin/protocols/ProtocolLayout";
 
 
 
 function ProtocolPage() {
     return ( 
-        <div>
-            All Protovols
+        <div className="">
+
+                <ProtocolLayout />
         </div>
      );
 }

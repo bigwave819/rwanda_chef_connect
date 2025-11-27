@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   UsersRound,
-  HandPlatter ,
-  Bookmark ,
+  HandPlatter,
+  Bookmark,
   LogOut,
   Menu,
   X,
@@ -23,8 +23,8 @@ function SideBar() {
   const links = [
     { id: 1, name: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
     { id: 2, name: "all cheefs", path: "/admin/chefs", icon: UsersRound },
-    { id: 3, name: "Protocol", path: "/admin/protocol", icon: HandPlatter  },
-    { id: 4, name: "bookings", path: "/admin/bookings", icon: Bookmark  },
+    { id: 3, name: "Protocol", path: "/admin/protocol", icon: HandPlatter },
+    { id: 4, name: "bookings", path: "/admin/bookings", icon: Bookmark },
   ];
 
   const handleSignOut = async () => {
@@ -32,8 +32,10 @@ function SideBar() {
     try {
       await signOut();
 
-      toast('Logout success fully')
-      window.location.href='/auth';
+      toast.success('Logout success fully', {
+        className: "bg-green-600 text-white border-green-700"
+      })
+      window.location.href = '/auth';
     } catch (error) {
       toast(`Error signing out due to ${error}`);
     } finally {
@@ -96,7 +98,7 @@ function SideBar() {
             {links.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.path;
-              
+
               return (
                 <li key={item.id}>
                   <Link
@@ -104,8 +106,8 @@ function SideBar() {
                     onClick={closeSidebar}
                     className={`
                       flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group
-                      ${isActive 
-                        ? "text-white bg-pink-700 font-semibold shadow-lg" 
+                      ${isActive
+                        ? "text-white bg-pink-700 font-semibold shadow-lg"
                         : "text-pink-700 dark:text-gray-300 hover:text-pink-800"
                       }
                     `}

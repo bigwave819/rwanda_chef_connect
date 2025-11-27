@@ -1,10 +1,11 @@
 import AddChief from "./add-chief"
 import { Search } from 'lucide-react'
+import ViewChefs from "./viewChefs"
 
 const ChefLayout = () => {
   return (
     <div className="w-full">
-      <div className="card p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+      <div className="card p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm min-h-screen">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           {/** add the chef form button trigger */}
           <AddChief />
@@ -25,6 +26,7 @@ const ChefLayout = () => {
         {/** Add chef list/grid container here */}
         <div className="mt-6">
           {/* Your chefs list/grid will go here */}
+          <ViewChefs />
         </div>
       </div>
     </div>
