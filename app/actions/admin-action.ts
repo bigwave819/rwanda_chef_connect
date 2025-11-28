@@ -119,22 +119,39 @@ export async function createProtocol(formData: FormData) {
 
 
 // get all the protocols for the admin and the normal users
-export async function getAllProtocols() {
-    try {
-        const project = await prisma.protocol.findMany({
-            orderBy: { createdAt: 'desc' }
-        })
 
-        return project
-    } catch (error) {
-        console.error(error);
-        return []
-    }
+export async function getAllProtocols(query?: string) {
+  try {
+    return await prisma.protocol.findMany({
+      where: query
+        ? {
+            name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          }
+        : {},
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
 }
 
-// get the single protocols for the admin and the single user
-export async function getSingleProtocol() {
 
+
+// get the single protocols for the admin and the single user
+export async function getSingleProtocol(id: string) {
+  try {
+    const protocol = await prisma.protocol.findUnique({
+      where: { id }
+    })
+    return protocol
+  } catch (error) {
+    console.error(error)
+    return null
+  }
 }
 
 // update the protocols

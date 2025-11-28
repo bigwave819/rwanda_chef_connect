@@ -8,19 +8,19 @@ import { usePathname } from "next/navigation";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
+  const pathName = usePathname();
+
+  // Hide navbar on admin routes
+  if (pathName.startsWith("/admin")) return null;
 
   const navbarData = [
     { id: 1, label: "Home", link: "/" },
     { id: 2, label: "Chef", link: "/chefs" },
-    { id: 2, label: "Protocols", link: "/protocols" },
-    { id: 3, label: "About", link: "/about" },
+    { id: 3, label: "Protocols", link: "/protocols" },
+    { id: 4, label: "About", link: "/about" },
   ];
 
   const closeMenu = () => setOpen(false);
-
-  const pathName = usePathname()
-
-  if(pathName.startsWith('/admin')) return null
 
   return (
     <div className="w-full p-5">
@@ -29,37 +29,57 @@ export default function Home() {
         {/* Logo */}
         <h1 className="text-2xl font-bold">RwandaChef</h1>
 
-        {/* Links */}
-        <div className="flex space-x-6 p-4 rounded-3xl backdrop-blur-md backdrop-grayscale bg-white/40">
-          {navbarData.map((item) => (
-            <Link key={item.id} href={item.link}>
-              {item.label}
-            </Link>
-          ))}
+        {/* Glassmorphism Links */}
+        <div
+          className="
+            flex space-x-6 px-6 py-3 rounded-3xl 
+            backdrop-blur-lg bg-white/20 
+            border border-white/30 shadow-lg 
+            transition 
+            hover:bg-white/30
+          "
+        >
+          {navbarData.map((item) => {
+            const active = pathName === item.link;
+
+            return (
+              <Link
+                key={item.id}
+                href={item.link}
+                className={`text-sm font-medium transition 
+                  ${
+                    active
+                      ? "text-pink-600 font-semibold"
+                      : "text-gray-800 hover:text-pink-500"
+                  }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Login button */}
         <Link href="/auth">
-          <Button className="btn">
+          <Button className="btn flex items-center gap-2">
             Login Here <LogIn size={18} />
           </Button>
         </Link>
       </div>
 
-      {/* ===== MOBILE NAV ===== */}
+      {/* MOBILE NAV */}
       <div className="md:hidden flex justify-between items-center">
-        {/* LOGO */}
         <h1 className="text-2xl font-bold">RwandaChef</h1>
 
-        {/* HAMBURGER BTN */}
         <button onClick={() => setOpen(true)}>
           <Menu size={28} className="text-gray-700" />
         </button>
       </div>
 
-      {/* ===== MOBILE SIDEBAR ===== */}
+      {/* MOBILE SIDEBAR */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-xl transform transition-transform duration-300 z-50 
+        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-xl 
+        transform transition-transform duration-300 z-50 
         ${open ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* CLOSE BTN */}
@@ -76,7 +96,11 @@ export default function Home() {
               <Link
                 href={item.link}
                 onClick={closeMenu}
-                className="block hover:text-pink-600"
+                className={`block ${
+                  pathName === item.link
+                    ? "text-pink-600"
+                    : "hover:text-pink-600"
+                }`}
               >
                 {item.label}
               </Link>

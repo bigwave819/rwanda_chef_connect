@@ -12,7 +12,6 @@ function AllChefs() {
                         Manage your team of chefs and their specialties
                     </p>
                 </div>
-                
                 <ChefLayout />
             </div>
         </div>

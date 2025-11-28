@@ -37,7 +37,7 @@ const ChefCard = ({
 
   return (
     <div className="rounded-2xl overflow-hidden shadow-md bg-white transition hover:shadow-2xl border border-gray-200">
-      <div className="relative h-60 w-full">
+      <div className="relative h-34 md:h-60 w-full">
         <Image
           src={imgError || !imageUrl ? "https://via.placeholder.com/300x200?text=Chef" : imageUrl}
           alt={name || "Chef"}
@@ -54,7 +54,7 @@ const ChefCard = ({
         <h2 className="text-lg font-semibold flex items-center gap-2">
           {name} <Sparkles className="w-4 h-4 text-yellow-500" />
         </h2>
-        <p className="text-gray-700 text-sm flex gap-2 items-center">
+        <p className="text-gray-700 text-sm md:flex gap-2 items-center hidden">
           <BadgeCheck className="w-4 h-4 text-green-600" />
           <span className="font-medium">Speciality:</span> {speciality}
         </p>
