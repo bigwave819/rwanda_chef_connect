@@ -16,6 +16,7 @@ const registerSchema = z.object({
   names: z.string().min(2, "Enter your full name"),
   email: z.string().email("Enter a valid email"),
   password: z.string().min(8, "Minimum 8 characters").max(12, "Maximum 12 characters"),
+  role: z.enum(["CUSTOMER", "CHEF"], { message: "Please select an account type" }),
 })
 
 type RegisterFormProps = z.infer<typeof registerSchema>
@@ -27,36 +28,53 @@ const RegisterForm = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormProps>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { names: '', email: "", password: "" },
+    defaultValues: { names: '', email: "", role: "CUSTOMER", password: "" },
   })
 
+
   const onSubmit = async (data: RegisterFormProps) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const result = await signUp.email({
+      const { error } = await signUp.email({
         name: data.names,
         email: data.email,
         password: data.password,
-      })
+      });
 
-      if (result.error) {
-        toast.error(`Registration failed: ${result.error.message || result.error}`)
-        return
+      if (error) {
+        toast.error(`Registration failed: ${error.message || error}`);
+        return;
       }
 
-      toast.success("Registration successful! Please check your email to verify your account.", {
-        className: "bg-green-600 text-white border-green-700"
-      })
-      router.push('/admin/dashboard')
+      // Update role if it's CHEF
+      if (data.role === "CHEF") {
+        await fetch("/api/update-role", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: data.email, role: data.role }),
+        });
+      }
+
+      toast.success("Registration successful! Redirecting...", {
+        className: "bg-green-600 text-white border-green-700",
+      });
+
+      // Role-based redirect
+      if (data.role === "CHEF") {
+        router.push("/chef/dashboard");
+      } else {
+        router.push("/customer/dashboard");
+      }
+
     } catch (err: any) {
-      console.error("Registration error:", err)
+      console.error("Registration error:", err);
       toast.error(err?.message || "Something went wrong during registration", {
-        className: "bg-red-600 text-white border-red-700"
-      })
+        className: "bg-red-600 text-white border-red-700",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="max-w-md mx-auto p-6 space-y-6">
@@ -65,7 +83,7 @@ const RegisterForm = () => {
         <div className="flex flex-col">
           <label className="label mb-1 font-medium">Names</label>
           <div className="relative">
-            <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FiUser className="icon-input" />
             <input
               type="text"
               placeholder="Enter your full name"
@@ -80,7 +98,7 @@ const RegisterForm = () => {
         <div className="flex flex-col">
           <label className="label mb-1 font-medium">Email</label>
           <div className="relative">
-            <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FiMail className="icon-input" />
             <input
               type="email"
               placeholder="Enter your email"
@@ -91,11 +109,24 @@ const RegisterForm = () => {
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
         </div>
 
+        {/* Role Selector */}
+        <div className="flex flex-col">
+          <label className="label mb-1 font-medium">Account Type</label>
+          <select
+            className="input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500"
+            {...register("role")}
+          >
+            <option value="CUSTOMER">Customer</option>
+            <option value="CHEF">Chef</option>
+          </select>
+          {errors.role && <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>}
+        </div>
+
         {/* Password */}
         <div className="flex flex-col">
           <label className="label mb-1 font-medium">Password</label>
           <div className="relative">
-            <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FiLock className="icon-input" />
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
@@ -104,7 +135,7 @@ const RegisterForm = () => {
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className="absolute right-3 top-[55%] transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FiEyeOff /> : <FiEye />}

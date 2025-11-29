@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import { signIn } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
-
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email address"),
   password: z
@@ -21,18 +20,12 @@ const loginSchema = z.object({
     .max(12, "Maximum 12 characters"),
 });
 
-
-
 type LoginFormProps = z.infer<typeof loginSchema>;
 
-
-
 const LoginForm = () => {
-
-
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
 
   const {
     register,
@@ -43,34 +36,38 @@ const LoginForm = () => {
     defaultValues: { email: "", password: "" },
   });
 
-
   const onSubmit = async (data: LoginFormProps) => {
-
     setLoading(true);
-
     try {
-      const { error } = await signIn.email({
+      const result = await signIn.email({
         email: data.email,
         password: data.password,
       });
 
-      if (error) {
-        toast.error(`Login Failed due to ${error}`, {
-          className: "bg-red-600 text-white border-red-700"
-        })
+      if ("error" in result && result.error) {
+        toast.error(`Login Failed: ${result.error}`, {
+          className: "bg-red-600 text-white border-red-700",
+        });
         return;
       }
 
-      toast('login successfully', {
-        className: "bg-green-600 text-white border-green-700"
-      })
+      const res = await fetch("/api/get-user-role", {
+        headers: { Authorization: `Bearer ${result.data.token}` },
+      });
+      const roleData = await res.json();
 
-      window.location.href = '/admin/dashboard'
+      if (roleData.role === "CHEF") {
+        router.push("/chef/dashboard");
+      } else if(roleData.role === "CUSTOMER") {
+        router.push("/customer/dashboard");
+      } else {
+        window.location.href="/admin/dashboard"
+      }
 
-
-      console.log("Login success:", data);
-    } catch (err) {
-      toast(`Login Failed due to ${err}`)
+    } catch (err: any) {
+      toast.error(`Login Failed: ${err?.message || err}`, {
+        className: "bg-red-600 text-white border-red-700",
+      });
     } finally {
       setLoading(false);
     }
@@ -79,49 +76,44 @@ const LoginForm = () => {
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-lg space-y-4">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
         {/* Email */}
         <div className="flex flex-col">
           <label className="label mb-1 font-medium">Email</label>
           <div className="relative">
-            <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FiMail className="icon-input" />
             <input
               type="email"
               placeholder="Enter Email"
-              className="input pl-10"
+              className="input pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
               {...register("email")}
             />
           </div>
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-          )}
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
         </div>
 
         {/* Password */}
         <div className="flex flex-col">
           <label className="label mb-1 font-medium">Password</label>
           <div className="relative">
-            <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FiLock className="icon-input" />
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
-              className="input pl-10"
+              className="input pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
               {...register("password")}
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              className="absolute right-3 top-[55%] transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FiEyeOff /> : <FiEye />}
             </button>
           </div>
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-          )}
+          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
         </div>
 
-        <Button className="btn w-full mt-2">
+        <Button className="w-full mt-2 py-2 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg shadow-md" disabled={loading}>
           {loading ? <Spinner /> : "Login"}
         </Button>
       </form>
