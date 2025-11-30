@@ -6,15 +6,29 @@ datasource db {
   provider = "postgresql"
 }
 
+model Booking {
+  id          String @id @default(cuid())
+  userId      String
+  chefId      String
+  date        DateTime
+  status      BookingStatus @default(PENDING)
+  user        User @relation(fields: [userId], references: [id])
+  chef        Chef @relation(fields: [chefId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
 model Chef {
   id         String   @id @default(cuid())
   name       String
   speciality String
-  phone      String?
-  email      String?
-  imageUrl   String
+  phone      String
+  email      String
+  imageUrl   String?
+  isVisible   Boolean @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  bookings   Booking[]
 }
 
 model protocol {
@@ -39,6 +53,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   events        Event[]    @relation("UserEvents")
+  bookings      Booking[]
 
   @@unique([email])
   @@map("user")
@@ -115,4 +130,10 @@ enum Role {
   CUSTOMER
   CHEF
   ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

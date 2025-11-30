@@ -57,9 +57,9 @@ const LoginForm = () => {
       const roleData = await res.json();
 
       if (roleData.role === "CHEF") {
-        router.push("/chef/dashboard");
+        window.location.href="/chef/dashboard";
       } else if(roleData.role === "CUSTOMER") {
-        router.push("/customer/dashboard");
+        window.location.href = "/";
       } else {
         window.location.href="/admin/dashboard"
       }

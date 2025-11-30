@@ -1,0 +1,53 @@
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { LogOut, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { signOut } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+
+export default function UserAvatar({ user }: { user: any }) {
+
+    const router = useRouter()
+
+  const handleLogout = async () => {
+    await signOut();
+    window.location.href="/login";
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="p-0 rounded-full w-10 h-10">
+          <Avatar className="w-10 h-10">
+            <AvatarImage src={user?.image || ""} alt={user?.name || "U"} />
+            <AvatarFallback>
+              {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuItem onClick={() => router.push("/profile")}> 
+          <User className="mr-2 h-4 w-4" /> Profile
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+          <LogOut className="mr-2 h-4 w-4" /> Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

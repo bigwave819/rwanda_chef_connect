@@ -61,9 +61,9 @@ const RegisterForm = () => {
 
       // Role-based redirect
       if (data.role === "CHEF") {
-        router.push("/chef/dashboard");
+        window.location.href="/chef/dashboard";
       } else {
-        router.push("/customer/dashboard");
+        window.location.href="/";
       }
 
     } catch (err: any) {
