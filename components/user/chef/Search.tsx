@@ -8,8 +8,10 @@ interface Chef {
   id: string;
   name: string;
   speciality: string;
+  email: string;
+  isVisible: boolean;
   phone: string | null;
-  imageUrl?: string;
+  imageUrl?: string | null;
 }
 
 const ChefSearch = () => {
@@ -17,22 +19,24 @@ const ChefSearch = () => {
   const [chefs, setChefs] = useState<Chef[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Live search with 1.5s debounce
   useEffect(() => {
     const timer = setTimeout(async () => {
       setLoading(true);
+
       try {
         const data = await getTheChefs(query);
-        setChefs(data);
+        // FILTER: only show chefs where isVisible is true
+        const visibleChefs = data.filter((chef) => chef.isVisible);
+        setChefs(visibleChefs);
       } catch (err) {
         console.error(err);
         setChefs([]);
       } finally {
         setLoading(false);
       }
-    }, 1000); // <-- 1.5 seconds debounce
+    }, 1000);
 
-    return () => clearTimeout(timer); // cleanup previous timeout
+    return () => clearTimeout(timer);
   }, [query]);
 
   return (
@@ -46,7 +50,6 @@ const ChefSearch = () => {
         </p>
       </div>
 
-      {/* Search Input */}
       <div className="max-w-xl mx-auto mt-8">
         <input
           type="text"
@@ -57,7 +60,6 @@ const ChefSearch = () => {
         />
       </div>
 
-      {/* Results */}
       <div className="max-w-4xl mx-auto mt-8">
         <div className="text-center text-gray-600">
           {chefs.length} chef{chefs.length !== 1 ? "s" : ""} found
@@ -66,10 +68,16 @@ const ChefSearch = () => {
 
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
           {loading
-            ? Array.from({ length: 6 }).map((_, i) => <ChefCard key={i} loading />)
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <ChefCard key={i} loading={true} />
+              ))
             : chefs.length > 0
             ? chefs.map((chef) => <ChefCard key={chef.id} {...chef} />)
-            : query && <div className="col-span-full text-center py-12 text-gray-500">No chefs found.</div>}
+            : query && (
+                <div className="col-span-full text-center py-12 text-gray-500">
+                  No chefs found.
+                </div>
+              )}
         </div>
       </div>
     </div>

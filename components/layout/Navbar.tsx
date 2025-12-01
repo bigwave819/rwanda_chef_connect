@@ -24,7 +24,7 @@ export default function Home() {
   }, []);
 
   // Hide navbar for admin or chef
-  if (user?.role === "ADMIN" || user?.role === "CHEF") return null;
+  if (user === "ADMIN" || user === "CHEF") return null;
 
   const navbarData = [
     { id: 1, label: "Home", link: "/" },

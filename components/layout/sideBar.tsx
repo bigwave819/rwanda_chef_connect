@@ -42,7 +42,7 @@ function SideBar() {
 
   // CHEF LINKS
   const chefLinks = [
-    { id: 1, name: "Profile", path: "/chef/profile", icon: User },
+    { id: 1, name: "Profile", path: "/chef/dashboard", icon: User },
     { id: 2, name: "Bookings", path: "/chef/bookings", icon: Bookmark },
   ];
 

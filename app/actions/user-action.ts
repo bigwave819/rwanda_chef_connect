@@ -9,7 +9,8 @@ export async function getCurrentUserRole() {
     headers: await headers()
   });
 
-  if (!session?.user?.email) return null;
+  try {
+    if (!session?.user.email) return null;
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
@@ -17,4 +18,10 @@ export async function getCurrentUserRole() {
   });
 
   return user?.role || null;
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message
+    }
+  }
 }

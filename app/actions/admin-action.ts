@@ -13,6 +13,8 @@ export async function createTheChef(formData: FormData) {
     try {
         const name = formData.get("name") as string;
         const speciality = formData.get("speciality") as string;
+        const phone = formData.get("phone") as string;
+        const email = formData.get("email") as string;
         const imageUrl = formData.get("imageUrl") as string;
 
         if (!name || !speciality || !imageUrl) {
@@ -23,6 +25,8 @@ export async function createTheChef(formData: FormData) {
             data: {
                 name,
                 speciality,
+                phone,
+                email,
                 imageUrl
             },
         });
@@ -60,6 +64,21 @@ export async function getTheChefs(query?: string) {
     return [];
   }
 }
+
+//approve the chef 
+export const approveChef = async (id: string) => {
+  try {
+    const chef = await prisma.chef.update({
+      where: { id },
+      data: { isVisible: true },
+    });
+
+    return chef;
+  } catch (error: any) {
+    console.error(error);
+    return {message: `Failed to approve chef ${error}`, success: false };
+  }
+};
 
 // get the single chef for the admin and the single user
 export async function getSingleChief(id: string) {

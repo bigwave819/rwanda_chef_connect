@@ -21,7 +21,7 @@ export default function UserAvatar({ user }: { user: any }) {
 
   const handleLogout = async () => {
     await signOut();
-    window.location.href="/login";
+    window.location.href="/auth";
   };
 
   return (

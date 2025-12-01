@@ -6,19 +6,28 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface ChefCardProps {
+export interface ChefCardProps {
+  id?: string;
   name?: string;
   speciality?: string;
   phone?: string | null;
-  imageUrl?: string;
+  email?: string;
+  imageUrl?: string | null;
   loading?: boolean;
+  isVisible?: boolean;
+  onApprove?: (id: string) => void; // callback for admin approve
 }
 
 const ChefCard = ({
+  id,
   name,
   speciality,
+  phone,
+  email,
   imageUrl,
   loading = false,
+  isVisible,
+  onApprove,
 }: ChefCardProps) => {
   const [imgError, setImgError] = useState(false);
 
@@ -39,7 +48,11 @@ const ChefCard = ({
     <div className="rounded-2xl overflow-hidden shadow-md bg-white transition hover:shadow-2xl border border-gray-200">
       <div className="relative h-34 md:h-60 w-full">
         <Image
-          src={imgError || !imageUrl ? "https://via.placeholder.com/300x200?text=Chef" : imageUrl}
+          src={
+            imgError || !imageUrl
+              ? "https://via.placeholder.com/300x200?text=Chef"
+              : imageUrl
+          }
           alt={name || "Chef"}
           fill
           className="object-cover transition duration-500"
@@ -54,11 +67,24 @@ const ChefCard = ({
         <h2 className="text-lg font-semibold flex items-center gap-2">
           {name} <Sparkles className="w-4 h-4 text-yellow-500" />
         </h2>
+
         <p className="text-gray-700 text-sm md:flex gap-2 items-center hidden">
           <BadgeCheck className="w-4 h-4 text-green-600" />
           <span className="font-medium">Speciality:</span> {speciality}
         </p>
-        <Button className="w-full btn">View More</Button>
+
+        {/* If admin and chef not approved, show Approve button */}
+        {typeof isVisible !== "undefined" && !isVisible && onApprove && id && (
+          <Button
+            className="w-full btn bg-green-500 hover:bg-green-600"
+            onClick={() => onApprove(id)}
+          >
+            Approve
+          </Button>
+        )}
+
+        {/* Default View More button */}
+        {(isVisible || !onApprove) && <Button className="w-full btn">View More</Button>}
       </div>
     </div>
   );
