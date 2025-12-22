@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
 export default function UserAvatar({ user }: { user: any }) {
@@ -20,7 +19,7 @@ export default function UserAvatar({ user }: { user: any }) {
     const router = useRouter()
 
   const handleLogout = async () => {
-    await signOut();
+    // await signOut();
     window.location.href="/auth";
   };
 

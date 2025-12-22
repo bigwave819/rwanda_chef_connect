@@ -1,27 +1,8 @@
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
 import SideBar from "@/components/layout/sideBar"
-import { redirect } from "next/navigation"
 
 
 
 const layout = async ({ children }: Readonly<{ children: React.ReactNode }>) => {
-
-    const session = await auth.api.getSession({
-        headers: await headers()
-    })
-
-    if (!session) {
-        redirect("/auth")
-    }
-
-    // Get user metadata safely
-    const userRole = session.user?.role;
-
-    // Redirect if not admin
-    if (userRole !== "ADMIN") {
-        redirect("/");
-    }
 
     return (
         <div className="flex min-h-screen bg-gray-50 transition-colors duration-200">

@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from '../components/layout/Navbar'
 import { Toaster } from "@/components/ui/sonner"
 import { Poppins } from 'next/font/google';
+import Providers from "./providers";
 
 
 const poppins = Poppins({
@@ -25,9 +26,12 @@ export default function RootLayout({
     <html lang="en" className={poppins.variable}>
       <body
       >
-        <Navbar />
-        <Toaster />
-        <main>{children}</main>
+        {/* Wrap everything in your Query Providers */}
+        <Providers>
+          <Navbar />
+          <Toaster />
+          <main>{children}</main>
+        </Providers>
       </body>
     </html>
   );

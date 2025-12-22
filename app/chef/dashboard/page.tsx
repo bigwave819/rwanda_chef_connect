@@ -1,10 +1,8 @@
 
-
-
-import ChefLayout from '@/components/chef/chefLayout'
-
 const ChefDashboard = () => {
-  return <ChefLayout />
+  return (
+    <div>dsjijsdlkfjsd</div>
+  )
 }
 
 export default ChefDashboard

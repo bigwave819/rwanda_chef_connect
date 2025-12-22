@@ -1,30 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { LogIn, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import Avatar from './Avatar'
-
-import { getCurrentUserRole } from "@/app/actions/user-action";
+import Avatar from './Avatar';
+import { useAuthUser } from "@/hooks/useAuthUser"; // 1. Import your hook
 
 export default function Home() {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const pathName = usePathname();
-
-  // Fetch logged-in user
-  useEffect(() => {
-    async function loadUser() {
-      const res = await getCurrentUserRole();
-      setUser(res);
-    }
-    loadUser();
-  }, []);
-
-  // Hide navbar for admin or chef
-  if (user === "ADMIN" || user === "CHEF") return null;
+  
+  // 2. Use the hook to get user and role
+  const { user, role, isLoading } = useAuthUser();
 
   const navbarData = [
     { id: 1, label: "Home", link: "/" },
@@ -35,43 +24,47 @@ export default function Home() {
 
   const closeMenu = () => setOpen(false);
 
+  if (role === "admin" || role === "chef") {
+    return null;
+  }
+
+  // Show a simple skeleton or nothing while checking auth
+  if (isLoading) return <div className="h-20 w-full animate-pulse bg-gray-50" />;
+
   return (
     <div className="w-full p-5">
       {/* DESKTOP NAV */}
       <div className="hidden md:flex justify-between items-center">
-        {/* Logo */}
-        <h1 className="text-2xl font-bold">RwandaChef</h1>
+        <h1 className="text-2xl font-bold text-pink-700">RwandaChef</h1>
 
-        {/* Links */}
-        <div className="flex space-x-6 px-6 py-3 rounded-3xl backdrop-blur-lg bg-white/20 border border-white/30 shadow-lg hover:bg-white/30 transition">
+        <div className="flex items-center space-x-6 px-6 py-3 rounded-3xl backdrop-blur-lg bg-white/20 border border-white/30 shadow-lg">
           {navbarData.map((item) => {
             const active = pathName === item.link;
-
             return (
               <Link
                 key={item.id}
                 href={item.link}
-                className={`text-sm font-medium transition ${active
-                  ? "text-pink-600 font-semibold"
-                  : "text-gray-800 hover:text-pink-500"
-                  }`}
+                className={`text-sm font-medium transition ${
+                  active ? "text-pink-600 font-semibold" : "text-gray-800 hover:text-pink-500"
+                }`}
               >
                 {item.label}
               </Link>
             );
           })}
-          {user && (
+
+          {/* 4. Render "Bookings" only if role is 'user' */}
+          {role === "user" && (
             <Link
               href="/bookings"
-              onClick={closeMenu}
-              className={`block ${pathName === "/bookings" ? "text-pink-600" : "hover:text-pink-600"}`}
+              className={`text-sm font-medium ${pathName === "/bookings" ? "text-pink-600" : "text-gray-800 hover:text-pink-600"}`}
             >
               Bookings
             </Link>
           )}
         </div>
 
-        {/* Customer Avatar / Login */}
+        {/* Avatar / Login */}
         {user ? (
           <Avatar user={user} />
         ) : (
@@ -83,71 +76,31 @@ export default function Home() {
         )}
       </div>
 
-      {/* MOBILE NAV */}
+      {/* MOBILE NAV (Rest of your code remains same, just apply same link logic) */}
       <div className="md:hidden flex justify-between items-center">
         <h1 className="text-2xl font-bold">RwandaChef</h1>
-
         <button onClick={() => setOpen(true)}>
           <Menu size={28} className="text-gray-700" />
         </button>
       </div>
 
       {/* MOBILE SIDEBAR */}
-      <div
-        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-xl transform transition-transform duration-300 z-50 ${open ? "translate-x-0" : "translate-x-full"
-          }`}
-      >
-        <div className="flex justify-end p-4">
-          <button onClick={closeMenu}>
-            <X size={28} className="text-gray-600" />
-          </button>
-        </div>
-
+      <div className={`fixed top-0 right-0 h-full w-64 bg-white shadow-xl transform transition-transform duration-300 z-50 ${open ? "translate-x-0" : "translate-x-full"}`}>
+        <div className="flex justify-end p-4"><button onClick={closeMenu}><X size={28} /></button></div>
         <ul className="flex flex-col space-y-6 p-6 text-lg font-medium">
           {navbarData.map((item) => (
             <li key={item.id}>
-              <Link
-                href={item.link}
-                onClick={closeMenu}
-                className={`block ${pathName === item.link ? "text-pink-600" : "hover:text-pink-600"
-                  }`}
-              >
-                {item.label}
-              </Link>
-              
+              <Link href={item.link} onClick={closeMenu} className={pathName === item.link ? "text-pink-600" : ""}>{item.label}</Link>
             </li>
           ))}
-          {user && (
-                <Link
-                  href="/bookings"
-                  onClick={closeMenu}
-                  className={`block ${pathName === "/bookings" ? "text-pink-600" : "hover:text-pink-600"}`}
-                >
-                  Bookings
-                </Link>
-              )}
-        </ul>
-
-        {/* Login / Avatar */}
-        <div className="px-6 mt-6">
-          {user ? (
-            <Avatar user={user} />
-          ) : (
-            <Link href="/auth" onClick={closeMenu}>
-              <Button className="w-full py-2 bg-pink-500 text-white hover:bg-pink-600 rounded-xl shadow-md">
-                Login Here
-              </Button>
-            </Link>
+          {/* Mobile Link Condition */}
+          {role === "user" && (
+            <li>
+              <Link href="/bookings" onClick={closeMenu} className={pathName === "/bookings" ? "text-pink-600" : ""}>Bookings</Link>
+            </li>
           )}
-        </div>
+        </ul>
       </div>
-
-      {open && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
-          onClick={closeMenu}
-        ></div>
-      )}
     </div>
   );
 }

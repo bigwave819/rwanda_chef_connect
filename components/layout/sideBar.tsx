@@ -1,139 +1,110 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  UsersRound,
-  HandPlatter,
-  Bookmark,
-  LogOut,
-  Menu,
-  X,
-  User,
+import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { 
+  LayoutDashboard, UsersRound, HandPlatter, 
+  Bookmark, LogOut, Menu, X, User 
 } from "lucide-react";
-import { getCurrentUserRole } from "@/app/actions/user-action";
-import { signOut } from "@/lib/auth-client";
 import { toast } from "sonner";
+import Cookies from "js-cookie";
+import { useAuthUser } from "@/hooks/useAuthUser"; // Path to your hook
 
 function SideBar() {
   const pathname = usePathname();
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [role, setRole] = useState<string | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  useEffect(() => {
-    async function fetchRole() {
-      const r = await getCurrentUserRole();
-      setRole(r);
-    }
-    fetchRole();
-  }, []);
+  const { user, role, isLoading } = useAuthUser();
 
-  
-  // ADMIN LINKS
+  // 1. Define Nav Item Arrays
   const adminLinks = [
     { id: 1, name: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
-    { id: 2, name: "All chefs", path: "/admin/chefs", icon: UsersRound },
-    { id: 3, name: "Protocol", path: "/admin/protocol", icon: HandPlatter },
+    { id: 2, name: "All Users", path: "/admin/users", icon: UsersRound },
     { id: 4, name: "Bookings", path: "/admin/bookings", icon: Bookmark },
   ];
 
-  // CHEF LINKS
   const chefLinks = [
     { id: 1, name: "Profile", path: "/chef/dashboard", icon: User },
     { id: 2, name: "Bookings", path: "/chef/bookings", icon: Bookmark },
   ];
 
-  const links = role === "CHEF" ? chefLinks : adminLinks;
+  // 2. Role-Based Logic: Default to empty array while loading or if no role found
+  const links = role === "chef" ? chefLinks : role === "admin" ? adminLinks : [];
 
   const handleSignOut = async () => {
-    setLoading(true);
+    setIsLoggingOut(true);
     try {
-      await signOut();
-
-      toast.success("Logout successful", {
-        className: "bg-green-600 text-white border-green-700",
-      });
-      window.location.href = "/auth";
+      Cookies.remove("userId");
+      toast.success("Logout successful");
+      router.push("/auth");
     } catch (error) {
-      toast(`Error signing out due to ${error}`);
+      toast.error("Error signing out");
     } finally {
-      setLoading(false);
+      setIsLoggingOut(false);
     }
   };
+
+  // 3. Handling UI states
+  if (isLoading) return <div className="hidden lg:flex w-72 border-r h-screen bg-gray-50 animate-pulse" />;
+  if (!user && !isLoading) return null;
 
   return (
     <>
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-pink-700 text-white rounded-md shadow-lg hover:scale-105 transition-transform"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-pink-700 text-white rounded-md shadow-lg"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Overlay */}
-      {isOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-30 backdrop-blur-sm"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
+      {/* Sidebar Sidebar Container */}
       <div
         className={`
           fixed lg:sticky top-0 left-0 z-40
-          w-72 border-r border-gray-200 p-6
+          w-72 border-r border-gray-200 p-6 bg-white
           transform transition-all duration-300 ease-in-out
           flex flex-col h-screen
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-          shadow-xl lg:shadow-none
         `}
       >
-        {/* Logo */}
-        <div className="mb-8 pt-4">
+        {/* Logo and User Info */}
+        <div className="mb-8 pt-4 text-center">
           <div className="flex items-center justify-center gap-3">
             <div className="w-10 h-10 bg-pink-700 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">CR</span>
             </div>
-            <h1 className="font-extrabold text-xl text-pink-800 text-center">
-              Chef Rwanda
-            </h1>
+            <h1 className="font-extrabold text-xl text-pink-800">Chef Rwanda</h1>
+          </div>
+          <div className="mt-4 p-2 bg-pink-50 rounded-lg">
+            <p className="text-sm font-bold text-pink-900">{user?.name}</p>
+            <p className="text-[10px] uppercase tracking-widest text-pink-600 font-semibold">{role}</p>
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation Mapping */}
         <nav className="flex-1">
           <ul className="space-y-2">
             {links.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.path;
-
               return (
                 <li key={item.id}>
                   <Link
                     href={item.path}
                     onClick={() => setIsOpen(false)}
                     className={`
-                      flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group
-                      ${
-                        isActive
-                          ? "text-white bg-pink-700 font-semibold shadow-lg"
-                          : "text-pink-700 hover:text-pink-800"
-                      }
+                      flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200
+                      ${isActive 
+                        ? "text-white bg-pink-700 font-semibold shadow-md" 
+                        : "text-gray-500 hover:text-pink-700 hover:bg-pink-50"}
                     `}
                   >
-                    <Icon
-                      size={20}
-                      className={isActive ? "text-white" : "group-hover:scale-110 transition-transform"}
-                    />
+                    <Icon size={20} />
                     <span className="capitalize">{item.name}</span>
-                    {isActive && (
-                      <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
-                    )}
                   </Link>
                 </li>
               );
@@ -145,24 +116,12 @@ function SideBar() {
         <div className="pt-4 border-t border-gray-200">
           <button
             onClick={handleSignOut}
-            disabled={loading}
-            className={`
-              flex items-center justify-center w-full gap-3 py-3 px-4 
-              font-semibold transition-all duration-200 rounded-xl
-              ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed text-gray-600"
-                  : "bg-blue-900 hover:bg-blue-950 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
-              }
-            `}
+            disabled={isLoggingOut}
+            className="flex items-center justify-center w-full gap-3 py-3 px-4 bg-blue-900 hover:bg-blue-950 text-white font-semibold rounded-xl transition-all disabled:bg-gray-400"
           >
             <LogOut size={18} />
-            {loading ? "Signing out..." : "Logout"}
+            {isLoggingOut ? "Signing out..." : "Logout"}
           </button>
-        </div>
-
-        <div className="mt-4 text-center">
-          <p className="text-xs text-gray-500">v1.0.0</p>
         </div>
       </div>
     </>

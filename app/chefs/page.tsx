@@ -1,5 +1,7 @@
-import ChefSearch from "@/components/user/chef/Search";
-
 export default function ChefPage() {
-  return <ChefSearch />;
+  return (
+    <div>
+      <h1>Chefs</h1>
+    </div>
+  )
 }
