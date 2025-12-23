@@ -12,12 +12,10 @@ export const useAuthUser = () => {
     staleTime: 1000 * 60 * 5, 
   });
 
-  // CHECK YOUR BROWSER CONSOLE FOR THIS:
-  console.log("DEBUG - User Data from API:", data);
 
   return {
     user: data,
-    role: data?.role.toLowerCase(), // Normalize to lowercase for easier checks
+    role: data?.role.toLowerCase(),
     isLoading,
     isError,
   };

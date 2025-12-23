@@ -12,6 +12,8 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
+
+
 export const metadata: Metadata = {
   title: "Rwandachef find chef for your party here",
   description: "here you can find the number one page",

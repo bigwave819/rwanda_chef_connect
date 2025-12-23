@@ -1,4 +1,4 @@
-import UserList from "@/components/admin/UserList";
+import UserList from "@/components/admin/users/UserList";
 import { Tabs, TabsContent, TabsTrigger, TabsList } from "@/components/ui/tabs";
 import { Search } from "lucide-react"; // Using Lucide for a cleaner look
 

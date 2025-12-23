@@ -19,16 +19,19 @@ function SideBar() {
 
   const { user, role, isLoading } = useAuthUser();
 
+  console.log(role);
+  
   // 1. Define Nav Item Arrays
   const adminLinks = [
     { id: 1, name: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
-    { id: 2, name: "All Users", path: "/admin/users", icon: UsersRound },
+    { id: 2, name: "All users", path: "/admin/users", icon: UsersRound },
     { id: 4, name: "Bookings", path: "/admin/bookings", icon: Bookmark },
   ];
 
   const chefLinks = [
-    { id: 1, name: "Profile", path: "/chef/dashboard", icon: User },
+    { id: 1, name: "Profile", path: "/chef/dashboard", icon: LayoutDashboard },
     { id: 2, name: "Bookings", path: "/chef/bookings", icon: Bookmark },
+    { id: 2, name: "Profile", path: "/chef/profile", icon: User },
   ];
 
   // 2. Role-Based Logic: Default to empty array while loading or if no role found

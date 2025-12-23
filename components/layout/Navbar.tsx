@@ -11,7 +11,7 @@ import { useAuthUser } from "@/hooks/useAuthUser"; // 1. Import your hook
 export default function Home() {
   const [open, setOpen] = useState(false);
   const pathName = usePathname();
-  
+
   // 2. Use the hook to get user and role
   const { user, role, isLoading } = useAuthUser();
 
@@ -23,13 +23,13 @@ export default function Home() {
   ];
 
   const closeMenu = () => setOpen(false);
-
+  // Show a simple skeleton or nothing while checking auth
+  if (isLoading) return <div className="h-20 w-full animate-pulse bg-gray-50" />;
   if (role === "admin" || role === "chef") {
     return null;
   }
 
-  // Show a simple skeleton or nothing while checking auth
-  if (isLoading) return <div className="h-20 w-full animate-pulse bg-gray-50" />;
+
 
   return (
     <div className="w-full p-5">
@@ -44,9 +44,8 @@ export default function Home() {
               <Link
                 key={item.id}
                 href={item.link}
-                className={`text-sm font-medium transition ${
-                  active ? "text-pink-600 font-semibold" : "text-gray-800 hover:text-pink-500"
-                }`}
+                className={`text-sm font-medium transition ${active ? "text-pink-600 font-semibold" : "text-gray-800 hover:text-pink-500"
+                  }`}
               >
                 {item.label}
               </Link>

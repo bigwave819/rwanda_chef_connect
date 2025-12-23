@@ -1,7 +1,7 @@
 "use client";
 
 import { useAdmin } from "@/hooks/useAdmin";
-import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "../ui/table";
+import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "../../ui/table";
 
 type User = {
     _id: string;
@@ -45,7 +45,7 @@ const UserList = ({ filterRole }: UserListProps) => {
                             <TableCell>{user.name}</TableCell>
                             <TableCell>{user.email}</TableCell>
                             <TableCell className="capitalize">{user.role}</TableCell>
-                            <TableCell>{user.isVisible ? "Active" : "Pending"}</TableCell>
+                            <TableCell className={ user.isVisible ? 'text-green-600 bg-green-50 px-2 py-1 rounded-full' : 'text-red-600 bg-red-50 px-2 py-1 rounded-full' }>{user.isVisible ? "Visible" : "Invisible"}</TableCell>
                         </TableRow>
                     ))
                 ) : (
