@@ -38,10 +38,10 @@ export default function ProfileView() {
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUOUxlqDV43cjHokDQRxAK1nxRF_tl8YtIcg&s";
 
   return (
-    <div className="rounded-3xl bg-white p-8 shadow-sm">
+    <div className="rounded-3xl mt-10 p-8 shadow-xl">
       <div className="flex flex-col gap-8 md:flex-row md:items-center">
         {/* Avatar */}
-        <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-[2.5rem] border-[6px] border-white bg-white shadow-xl md:h-40 md:w-40">
+        <div className="w-72 h-72 relative rounded-xl">
           <Image
             src={avatar}
             alt="Profile avatar"

@@ -46,3 +46,33 @@ export const useAddProfile = () => {
     },
   })
 }
+
+export const useViewProfiles = () => {
+  const { data, isLoading, isError } = useQuery<Profile[]>({
+    queryKey: ['profiles'],
+    queryFn: async () => {
+      const { data } = await AxiosInstance.get('/user/all-profiles')
+      return data
+    }
+  })
+  return {
+        data,
+        isLoading, 
+        isError
+    }
+}
+
+export const useViewSpecificProfiles = (id: string) => {
+  const { data, isLoading, isError } = useQuery<Profile>({
+    queryKey: ['profiles', id],
+    queryFn: async () => {
+      const { data } = await AxiosInstance.get(`/user/public-profile/${id}`)
+      return data
+    }
+  })
+  return {
+        data,
+        isLoading, 
+        isError
+    }
+}
