@@ -1,9 +1,8 @@
 
-
-const ChefProfile = () => {
+const ChefDashboard = () => {
   return (
-    <div>ChefProfile</div>
+    <div>dsjijsdlkfjsd</div>
   )
 }
 
-export default ChefProfile
+export default ChefDashboard

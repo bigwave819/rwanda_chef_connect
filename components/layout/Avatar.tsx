@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Avatar,
   AvatarImage,
@@ -13,14 +15,29 @@ import {
 import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Cookies from "js-cookie";
+import { useState } from "react";
+import { Spinner } from "../ui/spinner";
 
 export default function UserAvatar({ user }: { user: any }) {
 
-    const router = useRouter()
+  const router = useRouter()
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
-    // await signOut();
-    window.location.href="/auth";
+    setIsLoggingOut(true)
+    try {
+      Cookies.remove("userId");
+      toast.success("Logout successful");
+      router.push("/auth");
+    } catch {
+      toast.error("Error signing out");
+    } finally {
+      setIsLoggingOut(false);
+    }
+    window.location.href = "/auth";
   };
 
   return (
@@ -37,14 +54,21 @@ export default function UserAvatar({ user }: { user: any }) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuItem onClick={() => router.push("/profile")}> 
+        <DropdownMenuItem onClick={() => router.push("/profile")}>
           <User className="mr-2 h-4 w-4" /> Profile
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
         <DropdownMenuItem onClick={handleLogout} className="text-red-600">
-          <LogOut className="mr-2 h-4 w-4" /> Logout
+          {isLoggingOut ? (
+            <Spinner />
+          ) : (
+            <>
+              <LogOut className="mr-2 h-4 w-4" /> Logout
+            </>
+          )}
+
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

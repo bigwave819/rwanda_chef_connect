@@ -9,6 +9,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
+import CreateBooking from "./CreateBooking";
 
 interface ChefsDetailsProps {
     id: string;
@@ -98,9 +99,7 @@ function ChefsDetails({ id }: ChefsDetailsProps) {
                         </div>
                     </div>
 
-                    <button className="mt-10 w-full bg-pink-500 hover:bg-pink-600 text-white py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-pink-200 active:scale-95">
-                        Hire {profile.username}
-                    </button>
+                    <CreateBooking name={profile.username} bookedUserId={profile.user._id} />
                 </div>
             </div>
         </div>

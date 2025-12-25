@@ -42,7 +42,8 @@ export async function loginUser(formData: { email: string; password: string }) {
   revalidatePath("/");
 
   if (data.user.role === "admin") redirect("/admin/dashboard");
-  if (data.user.role === "chef") redirect("/chef/dashboard");
+  if (data.user.role === "chef") redirect("/chef/profile");
+  if (data.user.role === "protocol") redirect("/protocol/profile");
   redirect("/");
 }
 

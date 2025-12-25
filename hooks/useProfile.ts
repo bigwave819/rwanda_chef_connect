@@ -2,10 +2,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import AxiosInstance from "@/lib/axios";
 import Cookies from "js-cookie";
 
+type UserRef = {
+  _id: string;
+  name: string;
+  email: string;
+  role: "user" | "chef" | "protocol" | "admin";
+};
+
 
 type Profile ={
   _id: string
-  user: string
+  user: UserRef
   image: string[]
   phone: string
   bio: string
@@ -14,6 +21,7 @@ type Profile ={
 }
 
 export const useProfile = () => {
+  const queryClient = useQueryClient();
     const { data, isLoading, isError } = useQuery<Profile>({
         queryKey: ['profile'],
         queryFn: async () => {
@@ -23,10 +31,34 @@ export const useProfile = () => {
         enabled: !!Cookies.get("userId"),
     })
 
+    const deleteProfile = useMutation({
+      mutationFn: async (id: string) => {
+        const { data } = await AxiosInstance.delete<{ profile: Profile }>(`/user/delete-account/${id}`)
+        return data
+      },
+
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] })
+    })
+
+    const updateProfile = useMutation({
+      mutationFn: async (formData: FormData) => {
+        const { data } = await AxiosInstance.put<{ profile: Profile }>(`/user/update/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/formdata'
+          }
+        })
+        return data
+      },
+    })
+
     return {
         data,
         isLoading, 
-        isError
+        isError,
+        deleteProfile: deleteProfile.mutate,
+        isDeletingProfile: deleteProfile.isPending,
+        updateProfile: updateProfile.mutate,
+        isUpdatingProfile: updateProfile.isPending
     }
 }
 

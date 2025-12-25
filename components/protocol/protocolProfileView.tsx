@@ -1,13 +1,13 @@
-"use client";
+'use client'
 
 import Image from "next/image";
 import { User, Mail, Phone } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
-import AddProfile from "./AddProfile";
+import AddProfile from "./AddProtocolProfile";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 
-export default function ProfileView() {
+const ProtocolPageView = () => {
   const { data: profile, isLoading, isError, deleteProfile, isDeletingProfile } =
     useProfile();
 
@@ -17,7 +17,7 @@ export default function ProfileView() {
     setMounted(true);
   }, []);
 
-  /* ✅ SAME output on server & first client render */
+  /* Prevent hydration mismatch */
   if (!mounted) {
     return (
       <div className="rounded-3xl border bg-white p-10 text-center text-gray-300">
@@ -29,7 +29,7 @@ export default function ProfileView() {
   if (isLoading) {
     return (
       <div className="animate-pulse rounded-3xl border bg-white p-10 text-center text-gray-400">
-        Loading your profile...
+        Loading protocol profile...
       </div>
     );
   }
@@ -42,7 +42,7 @@ export default function ProfileView() {
         </div>
 
         <p className="mb-4 font-medium text-gray-600">
-          You haven&apos;t created a profile yet.
+          This protocol hasn&apos;t created a profile yet.
         </p>
 
         <AddProfile />
@@ -61,7 +61,7 @@ export default function ProfileView() {
         <div className="relative h-72 w-72 rounded-xl overflow-hidden">
           <Image
             src={avatar}
-            alt="Profile avatar"
+            alt="Protocol profile avatar"
             fill
             sizes="(max-width: 768px) 100vw, 288px"
             priority
@@ -73,15 +73,13 @@ export default function ProfileView() {
         <div className="flex-1 space-y-3">
           <div>
             <h2 className="text-2xl font-semibold text-gray-800">
-              {profile.username || "Unnamed User"}
+              {profile.username || "Unnamed Protocol"}
             </h2>
-            <p className="text-sm text-gray-500">Chef Profile</p>
+            <p className="text-sm text-gray-500">Protocol Profile</p>
           </div>
 
           {profile.bio && (
-            <p className="max-w-xl text-sm text-gray-600">
-              {profile.bio}
-            </p>
+            <p className="max-w-xl text-sm text-gray-600">{profile.bio}</p>
           )}
 
           <div className="flex flex-wrap gap-6 pt-2 text-sm text-gray-600">
@@ -111,4 +109,6 @@ export default function ProfileView() {
       </div>
     </div>
   );
-}
+};
+
+export default ProtocolPageView;
