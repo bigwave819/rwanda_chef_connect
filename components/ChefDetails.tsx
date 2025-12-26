@@ -62,7 +62,7 @@ function ChefsDetails({ id }: ChefsDetailsProps) {
                 {/* RIGHT — Chef Details */}
                 <div className="flex flex-col p-8 md:p-12">
                     <div className="mb-6">
-                        <span className="text-pink-500 font-bold tracking-widest uppercase text-xs">Professional Chef</span>
+                        <span className="text-pink-500 font-bold tracking-widest uppercase text-xs">Professional {profile.user.role === "chef" ? "Chef" : "Protocol"}</span>
                         <h1 className="text-4xl font-extrabold text-gray-900 mt-2 capitalize">
                             {profile.username}
                         </h1>

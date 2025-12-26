@@ -3,7 +3,7 @@ import ChefsView from "@/components/chefsView";
 
 export default function ChefPage() {
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-h-screen">
       {/* Hero Section */}
       <div className="w-full flex justify-center px-5 py-16">
         <div className="w-full max-w-6xl bg-gradient-to-br from-pink-50 to-white rounded-2xl shadow-lg p-10 flex flex-col items-center text-center gap-6">

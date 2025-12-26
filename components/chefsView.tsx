@@ -4,7 +4,6 @@ import { useViewProfiles } from "@/hooks/useProfile";
 import Image from "next/image";
 import Link from "next/link";
 import { Phone, Mail, User } from "lucide-react";
-import { useBooking } from "@/hooks/useBooking";
 
 function ChefsView() {
   const { data: profiles, isLoading, isError } = useViewProfiles();
