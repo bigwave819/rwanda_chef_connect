@@ -1,11 +1,7 @@
-
-
-
+import AdminBookingView from "@/components/admin/bookings/AdminBookingView"
 
 const BookingPage = () => {
-  return (
-    <div>BookingPage</div>
-  )
+  return <AdminBookingView />
 }
 
 export default BookingPage

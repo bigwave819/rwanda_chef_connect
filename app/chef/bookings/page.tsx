@@ -1,8 +1,7 @@
+import ChefBookingView from "@/components/chef/Booking/ChefBookingView"
 
 const ChefDashboard = () => {
-  return (
-    <div>dsjijsdlkfjsd</div>
-  )
+  return <ChefBookingView />
 }
 
 export default ChefDashboard

@@ -41,7 +41,7 @@ function SideBar() {
   ];
 
   const protocolLinks = [
-    { id: 2, name: "Bookings", path: "/protocol/booking", icon: Bookmark },
+    { id: 2, name: "Bookings", path: "/protocol/bookings", icon: Bookmark },
     { id: 3, name: "Profile", path: "/protocol/profile", icon: User },
   ];
 

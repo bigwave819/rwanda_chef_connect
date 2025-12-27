@@ -1,11 +1,10 @@
+import ProfileView from "@/components/ProfileView"
 
 
-import React from 'react'
+
 
 const ProfilePage = () => {
-  return (
-    <div>ProfilePage</div>
-  )
+  return <ProfileView />
 }
 
 export default ProfilePage
