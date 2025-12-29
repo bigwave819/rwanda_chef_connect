@@ -30,7 +30,7 @@ export async function loginUser(formData: { email: string; password: string }) {
   cookieStore.set("token", data.token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "none",
     path: "/",
   });
 
