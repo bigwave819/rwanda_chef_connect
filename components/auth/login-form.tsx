@@ -12,10 +12,10 @@ import { loginUser } from "@/app/actions/auth";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email address"),
-  password: z.string().min(5).max(8),
+  password: z.string().min(5, "Password too short").max(12, "Password too long"),
 });
 
-type LoginFormProps = z.infer<typeof loginSchema>;
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
@@ -23,30 +23,28 @@ const LoginForm = () => {
 
   const {
     register,
+    handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormProps>({
+  } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
+  const onSubmit = async (data: LoginFormValues) => {
+    setLoading(true);
+    try {
+      await loginUser(data);
+      toast.success("Login successful");
+    } catch (err: any) {
+      if (err.message !== "NEXT_REDIRECT") {
+        toast.error(err.message || "Login failed");
+        setLoading(false);
+      }
+    }
+  };
+
   return (
     <div className="max-w-md mx-auto p-6 space-y-4">
-      <form
-        action={async (formData: FormData) => {
-          setLoading(true);
-          try {
-            await loginUser({
-              email: formData.get("email") as string,
-              password: formData.get("password") as string,
-            });
-          } catch (err: any) {
-            toast.error(err.message || "Login failed");
-          } finally {
-            setLoading(false);
-          }
-        }}
-        className="space-y-4"
-      >
-        {/* Email */}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label className="label">Email</label>
           <div className="relative">
@@ -58,14 +56,9 @@ const LoginForm = () => {
               {...register("email")}
             />
           </div>
-          {errors.email && (
-            <p className="text-red-500 text-sm">
-              {errors.email.message}
-            </p>
-          )}
+          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
         </div>
 
-        {/* Password */}
         <div>
           <label className="label">Password</label>
           <div className="relative">
@@ -84,9 +77,10 @@ const LoginForm = () => {
               {showPassword ? <FiEyeOff /> : <FiEye />}
             </button>
           </div>
+          {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
         </div>
 
-        <Button className="btn w-full" disabled={loading}>
+        <Button type="submit" className="btn w-full" disabled={loading}>
           {loading ? <Spinner /> : "Login"}
         </Button>
       </form>

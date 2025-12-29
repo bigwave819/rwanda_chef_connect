@@ -42,6 +42,7 @@ export async function loginUser(formData: { email: string; password: string }) {
   revalidatePath("/");
 
   if (data.user.role === "admin") redirect("/admin/dashboard");
+  if (data.user.role === "user") redirect("/");
   if (data.user.role === "chef") redirect("/chef/profile");
   if (data.user.role === "protocol") redirect("/protocol/profile");
   redirect("/");
@@ -72,7 +73,22 @@ export async function registerUser(formData: RegisterPayload) {
     })
   }
 
-  revalidatePath("/");
-
   redirect("/auth")
+}
+
+export async function logoutUser() {
+  const cookieStore = await cookies();
+
+  cookieStore.set("token", "", {
+    httpOnly: true,
+    path: "/",
+    maxAge: 0,
+  });
+
+  cookieStore.set("userId", "", {
+    path: "/",
+    maxAge: 0,
+  });
+
+  redirect("/");
 }

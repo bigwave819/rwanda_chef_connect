@@ -16,9 +16,9 @@ import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import Cookies from "js-cookie";
 import { useState } from "react";
 import { Spinner } from "../ui/spinner";
+import { logoutUser } from "@/app/actions/auth";
 
 export default function UserAvatar({ user }: { user: any }) {
 
@@ -29,7 +29,7 @@ export default function UserAvatar({ user }: { user: any }) {
   const handleLogout = async () => {
     setIsLoggingOut(true)
     try {
-      Cookies.remove("userId");
+      await logoutUser()
       toast.success("Logout successful");
       router.push("/auth");
     } catch {

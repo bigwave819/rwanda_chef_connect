@@ -16,6 +16,8 @@ import { toast } from "sonner";
 import Cookies from "js-cookie";
 import { useAuthUser } from "@/hooks/useAuthUser";
 import { useMounted } from "@/hooks/useMounted";
+import { Spinner } from "../ui/spinner";
+import { logoutUser } from "@/app/actions/auth";
 
 function SideBar() {
   const pathname = usePathname();
@@ -59,9 +61,9 @@ function SideBar() {
   const handleSignOut = async () => {
     setIsLoggingOut(true);
     try {
-      Cookies.remove("userId");
+      await logoutUser()
       toast.success("Logout successful");
-      router.push("/auth");
+      window.location.href = '/'
     } catch {
       toast.error("Error signing out");
     } finally {
@@ -170,7 +172,7 @@ function SideBar() {
                 className="flex items-center justify-center w-full gap-3 py-3 px-4 bg-blue-900 hover:bg-blue-950 text-white font-semibold rounded-xl transition disabled:bg-gray-400"
               >
                 <LogOut size={18} />
-                {isLoggingOut ? "Signing out..." : "Logout"}
+                {isLoggingOut ? <Spinner /> : "Logout"}
               </button>
             </div>
           </div>
